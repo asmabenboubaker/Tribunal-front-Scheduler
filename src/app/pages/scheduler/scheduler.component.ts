@@ -1,4 +1,4 @@
-import { Component, OnInit,ViewChild  } from '@angular/core';
+import { Component, OnInit,ViewChild, enableProdMode  } from '@angular/core';
 import { Audience } from './Audience';
 // import serciescheduler from './service/servicescheduler.service';
 import { ServiceschedulerService } from '../../service/servicescheduler.service';
@@ -6,25 +6,27 @@ import { DxButtonModule, DxSchedulerModule, DxSchedulerComponent } from "devextr
 import CustomStore from 'devextreme/data/custom_store';
 import { createStore } from 'devextreme-aspnet-data-nojquery';
 import * as AspNetData from 'devextreme-aspnet-data-nojquery';
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
 import DataSource from 'devextreme/data/data_source';
 import { LoadOptions } from 'devextreme/data';
 import ODataStore from 'devextreme/data/odata/store';
+import { ChangeDetectorRef } from '@angular/core';
 @Component({
   selector: 'app-scheduler',
   templateUrl: './scheduler.component.html',
   styleUrls: ['./scheduler.component.scss']
 })
+
 export class SchedulerComponent   {
-  store: CustomStore;
-    
-  @ViewChild(DxSchedulerComponent, { static: false }) scheduler: DxSchedulerComponent;
+ 
+   
   // customDataSource: CustomStore;
   audienceList: Audience[] = [];
   //customDataSource: CustomStore;
   customDataSource: CustomStore;
   productsStore: ODataStore;
+
   // dataSource: Audience[] = [
   //   {
   //     title: 'Meeting 1',
@@ -46,48 +48,123 @@ export class SchedulerComponent   {
   //     recurrence: 'FREQ=WEEKLY;BYDAY=TU;COUNT=5', // Recurs every Tuesday for 5 occurrences
   //   },
   // ];
-  constructor(private dataService:ServiceschedulerService,private http: HttpClient) {
-    
-    const isNotEmpty = (value: unknown) => value !== undefined && value !== null && value !== '';
-  
-    this.productsStore = new ODataStore({
-      url: 'http://localhost:8081/picosoft/api/schedule/loadData',
-      key: 'idAudience',
-      version: 3,
-      onLoaded: () => {
+ 
+  currentDate: Date = new Date(2021, 3, 27);
+  appointmentsData: any;
+//   constructor(private dataService:ServiceschedulerService,private http: HttpClient) {
+     
+//       const url = 'http://localhost:8081/picosoft/api/schedule';
+   
+//       this.appointmentsData = AspNetData.createStore({
+//         key: 'AppointmentId',
+//         loadUrl: `${url}/loadData`,
+//         insertUrl: `${url}/addAudience`,
+//         updateUrl: `${url}/Put`,
+//         deleteUrl: `${url}/Delete`,
         
-         console.log("aaaaaaa");
-      }
-  });
-//   this.productsStore.remove({
-//     idAudience: 1,
-// }).then(
-//     (key) => { /* Process the "key" here */ },
-//     (error) => { console.log("ERRRRRRRRROR" + error); }
-// );
- 
-//    getAudienceList() {
-//     this.dataService.getAudienceList().subscribe(
-//       (response) => {
-//         this.audienceList = response;
-       
-//       },
-//       (error) => {
-//         console.error('Error fetching audience list:', error);
-//       }
-//     );
-//   }
-//   addAppointment() {
-//     this.scheduler.instance.addAppointment({
-//         text: "Website Re-Design Plan",
-//         startDate: new Date("2016-04-25T01:30:00.000Z"),
-//         endDate: new Date("2016-04-25T02:30:00.000Z")
-//     });
-//     console.log("aaaaaaaaaaaaaaaaaaaaaaaaa)");
-// }
- 
-}
-    
+//         onBeforeSend(method, ajaxOptions) {
+          
+//           ajaxOptions.xhrFields = { withCredentials: true };
+      
+//         // i get bad request 
+//         //   ajaxOptions.data = {
+//         //     AppointmentId: 1,
+//         //     Title: "test",
+//         //     StartDate: new Date(2021, 3, 27),
+//         //     EndDate: new Date(2021, 3, 27),
+//         //     DayLong: false,
+//         //     Recurrence: "test",
+//         //     RecurrenceException: "test",
+//         //     RecurrenceID: 1,
+//         //     RecurrenceRule: "test",
+//         //     Description: "test",
+//         //     Location: "test",
+//         //     OwnerId: 1,
+//         //     Priority: 1,
+//         //     ReminderInfo: "test",
+//         //     ReminderTime: "test",
+//         //     AllDay: false,
+//         //     Type: "test",
+//         //     Status: "test",
+//         //     Label: "test",
+//         //     ResourceId: 1,
+//         //     ResourceIds: "test",
+//         //     Attendees: "test",
+//         //     AttendeesId: 1,
+          
+//         // };
+// // unsupportable media type
+        
+//         },
 
+//       });
+    
+// }
+    
+// store: CustomStore;
+// constructor() {
+//     let serviceUrl = "http://localhost:8081/picosoft/api/schedule";
+//     this.store = createStore({
+//         key: "AppointmentId",
+//         loadUrl: serviceUrl + "/loadData",
+     
+
+//         insertUrl: serviceUrl + "/addAudience",
+//         updateUrl: serviceUrl + "/UpdateAction",
+//         deleteUrl: serviceUrl + "/DeleteAction",
+//         onBeforeSend(method, ajaxOptions) {
+//           method = "POST";
+//           ajaxOptions.xhrFields = { withCredentials: true };
+//           ajaxOptions.dataType = "json";
+//           ajaxOptions.contentType = "application/json";
+      
+//         },
+        
+//     })
+    
+// }
+
+ 
+store: CustomStore;
+dataSource: DataSource;
+ 
+constructor(private dataService:ServiceschedulerService,private cdr: ChangeDetectorRef) {
+  this.store = new CustomStore({
+    key: "idAudience",
+    load: (loadOptions) => {
+     
+      return new Promise((resolve, reject) => {
+        dataService.getAudienceList().subscribe(
+          (audienceList) => {
+            resolve(audienceList);
+          },
+          (error) => {
+            reject(error);
+          }
+        );
+      });
+    },
+    insert: (values) => {
+      
+      return dataService.addAppointment(values).toPromise();  
+    },
+    update: (key, values) => {
+     
+      return dataService.updateAudience(key, values).toPromise();  
+    },
+    remove: (key) => {
+      return dataService.deleteAudience(key).toPromise().then(() => {
+       
+        this.dataSource.load();
+        this.cdr.detectChanges();
+      });
+    },
+  });
+
+  this.dataSource = new DataSource({
+    store: this.store,
+    paginate: false,  
+  });
+}
   }
 

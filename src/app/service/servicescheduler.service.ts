@@ -20,4 +20,12 @@ export class ServiceschedulerService {
   addAppointment(newAppointment: any): Observable<any> {
     return this.http.post<any>(this.addapi, newAppointment);
   }
+  deleteAudience(id: number): Observable<any> {
+    const deleteUrl = `http://localhost:8081/picosoft/api/schedule/deleteAudience/${id}`;
+    return this.http.delete<any>(deleteUrl);
+  }
+  updateAudience(id: number, updatedAudience: Audience): Observable<any> {
+    const updateUrl = `http://localhost:8081/picosoft/api/schedule/updateAudience/${id}`;
+    return this.http.put<any>(updateUrl, updatedAudience);
+  }
 }
