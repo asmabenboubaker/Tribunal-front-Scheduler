@@ -28,4 +28,39 @@ export class ServiceschedulerService {
     const updateUrl = `http://localhost:8081/picosoft/api/schedule/updateAudience/${id}`;
     return this.http.put<any>(updateUrl, updatedAudience);
   }
+  getResources(): Resource[] {
+    return resources;
+  }
+  
 }
+export class Resource {
+  text: string;
+
+  id: number;
+
+  color: string;
+}
+const resources: Resource[] = [
+  {
+    text: 'Room 401',
+    id: 1,
+    color: '#bbd806',
+  }, {
+    text: 'Room 402',
+    id: 2,
+    color: '#f34c8a',
+  }, {
+    text: 'Room 403',
+    id: 3,
+    color: '#ae7fcc',
+  }, {
+    text: 'Room 407',
+    id: 4,
+    color: '#ff8817',
+  }, {
+    text: 'Room 409',
+    id: 5,
+    color: '#03bb92',
+  },
+];
+ 

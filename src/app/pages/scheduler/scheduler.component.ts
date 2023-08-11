@@ -1,7 +1,7 @@
 import { Component, OnInit,ViewChild, enableProdMode  } from '@angular/core';
 import { Audience } from './Audience';
 // import serciescheduler from './service/servicescheduler.service';
-import { ServiceschedulerService } from '../../service/servicescheduler.service';
+import { Resource, ServiceschedulerService } from '../../service/servicescheduler.service';
 import { DxButtonModule, DxSchedulerModule, DxSchedulerComponent } from "devextreme-angular";
 import CustomStore from 'devextreme/data/custom_store';
 import { createStore } from 'devextreme-aspnet-data-nojquery';
@@ -18,10 +18,53 @@ import { ChangeDetectorRef } from '@angular/core';
   styleUrls: ['./scheduler.component.scss']
 })
 
-export class SchedulerComponent   {
- 
+export class SchedulerComponent    {
    
-  // customDataSource: CustomStore;
+  resourcesData: Resource[];
+// add fields to the form
+onAppointmentFormCreated (e:any) {
+  console.log("onAppointmentFormOpening fires");
+
+  e.popup.option("showTitle", true);
+  e.popup.option(
+    "title",
+    e.appointmentData.text
+      ? e.appointmentData.text
+      : "Create a new appointment"
+  );
+
+  const form = e.form;
+  let mainGroupItems = form.itemOption("mainGroup").items;
+  if (
+    !mainGroupItems.find(function (i) {
+      return i.dataField === "phone";
+    })
+  ) {
+    mainGroupItems.push({
+      colSpan: 2,
+      label: { text: "Phone Number" },
+      editorType: "dxTextBox",
+      dataField: "phone"
+    });
+    form.itemOption("mainGroup", "items", mainGroupItems);
+  }
+
+  let formItems = form.option("items");
+  if (
+    !formItems.find(function (i) {
+      return i.dataField === "location";
+    })
+  ) {
+    formItems.push({
+      colSpan: 2,
+      label: { text: "Location" },
+      editorType: "dxTextBox",
+      dataField: "location"
+    });
+    form.option("items", formItems);
+  }
+
+}
   audienceList: Audience[] = [];
   //customDataSource: CustomStore;
   customDataSource: CustomStore;
@@ -129,6 +172,8 @@ store: CustomStore;
 dataSource: DataSource;
  
 constructor(private dataService:ServiceschedulerService,private cdr: ChangeDetectorRef) {
+  
+  this.resourcesData = dataService.getResources();
   this.store = new CustomStore({
     key: "idAudience",
     load: (loadOptions) => {
@@ -155,8 +200,7 @@ constructor(private dataService:ServiceschedulerService,private cdr: ChangeDetec
     remove: (key) => {
       return dataService.deleteAudience(key).toPromise().then(() => {
        
-        this.dataSource.load();
-        this.cdr.detectChanges();
+         
       });
     },
   });
@@ -167,4 +211,3 @@ constructor(private dataService:ServiceschedulerService,private cdr: ChangeDetec
   });
 }
   }
-

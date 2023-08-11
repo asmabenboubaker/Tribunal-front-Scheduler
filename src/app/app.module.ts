@@ -33,6 +33,7 @@ import { FlagsMenuComponent } from './theme/components/flags-menu/flags-menu.com
 import { SchedulerComponent } from './pages/scheduler/scheduler.component';
 import { DxSchedulerModule } from 'devextreme-angular'; 
 import { DxButtonModule } from 'devextreme-angular';
+import { DxSelectBoxModule } from 'devextreme-angular';  
 
 @NgModule({  
   imports: [
@@ -43,6 +44,7 @@ import { DxButtonModule } from 'devextreme-angular';
     HttpClientModule,
     DxSchedulerModule,
     DxButtonModule,
+    DxSelectBoxModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

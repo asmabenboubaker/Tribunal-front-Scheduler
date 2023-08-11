@@ -1,7 +1,10 @@
- <dx-scheduler id="scheduler" [dataSource]="store"   >
-   
-</dx-scheduler >
+ <dx-scheduler id="scheduler" [dataSource]="store" 
+ (onAppointmentFormOpening)="onAppointmentFormCreated($event)"
+
+ >
  
+</dx-scheduler >
+
  
 <h1>hiiiii</h1> 
  
