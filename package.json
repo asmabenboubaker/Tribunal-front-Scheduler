@@ -22,6 +22,7 @@
     "@ngx-translate/core": "14.0.0",
     "@ngx-translate/http-loader": "7.0.0",
     "bootstrap": "4.6.1",
+    "cldr-data": "^36.0.1",
     "devextreme": "23.1.4",
     "devextreme-angular": "23.1.4",
     "devextreme-aspnet-data-nojquery": "^2.9.3",
