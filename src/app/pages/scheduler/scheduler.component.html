@@ -1,6 +1,13 @@
- <dx-scheduler id="scheduler" [dataSource]="store" 
+<div>
+  <label for="locationFilter">Select Location:</label>
+  <select id="locationFilter" (change)="onLocationFilterChanged($event.target.value)">
+    <option value="">All Locations</option>
+    <option *ngFor="let location of locations" [value]="location.text">{{ location.text }}</option>
+  </select>
+</div>
+ <dx-scheduler #scheduler id="scheduler" [dataSource]="store" 
  (onAppointmentFormOpening)="onAppointmentFormCreated($event)"
-
+ [groups]="groups"
  >
  
 </dx-scheduler >

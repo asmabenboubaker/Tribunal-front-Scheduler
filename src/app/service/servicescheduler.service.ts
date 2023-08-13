@@ -28,6 +28,10 @@ export class ServiceschedulerService {
     const updateUrl = `http://localhost:8081/picosoft/api/schedule/updateAudience/${id}`;
     return this.http.put<any>(updateUrl, updatedAudience);
   }
+  getFilteredAppointmentsByLocation(location: string): Observable<Audience[]> {
+    const apiUrl = `http://localhost:8081/picosoft/api/schedule/AudienceByLocation/${location}`;
+    return this.http.get<Audience[]>(apiUrl);
+  }
   getResources(): Resource[] {
     return resources;
   }

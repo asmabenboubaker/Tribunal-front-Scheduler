@@ -31,9 +31,10 @@ import { SearchComponent } from './pages/search/search.component';
 import { NotFoundComponent } from './pages/errors/not-found/not-found.component';
 import { FlagsMenuComponent } from './theme/components/flags-menu/flags-menu.component';
 import { SchedulerComponent } from './pages/scheduler/scheduler.component';
-import { DxSchedulerModule } from 'devextreme-angular'; 
+import { DxSchedulerModule, DxTagBoxModule } from 'devextreme-angular'; 
 import { DxButtonModule } from 'devextreme-angular';
 import { DxSelectBoxModule } from 'devextreme-angular';  
+import { FormsModule } from '@angular/forms';
 
 @NgModule({  
   imports: [
@@ -45,6 +46,8 @@ import { DxSelectBoxModule } from 'devextreme-angular';
     DxSchedulerModule,
     DxButtonModule,
     DxSelectBoxModule,
+    FormsModule,
+    DxTagBoxModule ,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

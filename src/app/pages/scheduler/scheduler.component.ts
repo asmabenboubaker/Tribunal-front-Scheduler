@@ -10,12 +10,13 @@ import { lastValueFrom } from 'rxjs';
 import DataSource from 'devextreme/data/data_source';
 import { LoadOptions } from 'devextreme/data';
 import ODataStore from 'devextreme/data/odata/store';
+//translation
 import { ChangeDetectorRef } from '@angular/core';
 import { locale, loadMessages } from 'devextreme/localization';
 import arMessages from 'devextreme/localization/messages/ar.json';
-
- 
-
+//filter by location
+import { assignees as allAssignees, places } from './data';
+import { OptionChangedEvent } from 'devextreme/ui/tag_box';
 
 @Component({
   selector: 'app-scheduler',
@@ -24,6 +25,8 @@ import arMessages from 'devextreme/localization/messages/ar.json';
 })
 
 export class SchedulerComponent   implements OnInit {
+  @ViewChild('scheduler', { static: false }) schedulerInstance: DxSchedulerComponent;
+
   //arabic scheduler
   ngOnInit() {
     loadMessages(arMessages); 
@@ -87,7 +90,19 @@ onAppointmentFormCreated (e:any) {
  
 store: CustomStore;
 dataSource: DataSource;
+ // filter by location  
  
+ assignees = allAssignees;
+
+ places = places;
+
+ allAssignees = allAssignees;
+
+ defaultSelectedAssignees = allAssignees.map(item => item.text);
+
+ views = ['day'];
+
+ groups = ['location'];
 constructor(private dataService:ServiceschedulerService,private cdr: ChangeDetectorRef) {
   
   this.resourcesData = dataService.getResources();
@@ -127,4 +142,85 @@ constructor(private dataService:ServiceschedulerService,private cdr: ChangeDetec
     paginate: false,  
   });
 }
+// onTagBoxValueChanged(e: OptionChangedEvent) {
+//   this.assignees = allAssignees.filter((item) => e.value.includes(item.text));
+// console.log("onTagBoxValueChanged fires");
+// }
+locations: { id: number; text: string }[] = [
+  { id: 1, text: 'masra' },
+  { id: 2, text: 'kkkkkkkkkkkk' },
+  
+];
+onLocationFilterChanged(location: string) {
+  if (!location) {
+    // Load all appointments
+    this.store = new CustomStore({
+      key: 'idAudience',
+      load: (loadOptions) => {
+     
+        return new Promise((resolve, reject) => {
+          this.dataService.getAudienceList().subscribe(
+            (audienceList) => {
+              resolve(audienceList);
+            },
+            (error) => {
+              reject(error);
+            }
+          );
+        });
+      },
+      insert: (values) => {
+        
+        return this.dataService.addAppointment(values).toPromise();  
+      },
+      update: (key, values) => {
+       
+        return this.dataService.updateAudience(key, values).toPromise();  
+      },
+      remove: (key) => {
+        return this.dataService.deleteAudience(key).toPromise().then(() => {
+         
+           
+        });
+      },
+    });
+     
+  } else {
+    
+    this.store = new CustomStore({
+      key: 'idAudience',
+      load: (loadOptions) => {
+        // Modify this part to fetch filtered appointments based on location
+        // For example:
+        return new Promise((resolve, reject) => {
+          this.dataService.getFilteredAppointmentsByLocation(location).subscribe(
+            (filteredAppointments) => {
+              resolve(filteredAppointments);
+            },
+            (error) => {
+              reject(error);
+            }
+          );
+        });
+      },
+      insert: (values) => {
+        
+        return this.dataService.addAppointment(values).toPromise();  
+      },
+      update: (key, values) => {
+       
+        return this.dataService.updateAudience(key, values).toPromise();  
+      },
+      remove: (key) => {
+        return this.dataService.deleteAudience(key).toPromise().then(() => {
+         
+           
+        });
+      },
+     
+    });
+  }
+}
+
+
   }
