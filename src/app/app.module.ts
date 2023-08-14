@@ -33,7 +33,7 @@ import { FlagsMenuComponent } from './theme/components/flags-menu/flags-menu.com
 import { SchedulerComponent } from './pages/scheduler/scheduler.component';
 import { DxSchedulerModule, DxTagBoxModule } from 'devextreme-angular'; 
 import { DxButtonModule } from 'devextreme-angular';
-import { DxSelectBoxModule } from 'devextreme-angular';  
+import { DxSelectBoxModule, DxRadioGroupModule  } from 'devextreme-angular';  
 import { FormsModule } from '@angular/forms';
 
 @NgModule({  
@@ -48,6 +48,7 @@ import { FormsModule } from '@angular/forms';
     DxSelectBoxModule,
     FormsModule,
     DxTagBoxModule ,
+    DxRadioGroupModule,
     TranslateModule.forRoot({
       loader: {
         provide: TranslateLoader,

@@ -1,17 +1,32 @@
-<div>
-  <label for="locationFilter">Select Location:</label>
-  <select id="locationFilter" (change)="onLocationFilterChanged($event.target.value)">
-    <option value="">All Locations</option>
-    <option *ngFor="let location of locations" [value]="location.text">{{ location.text }}</option>
-  </select>
-</div>
- <dx-scheduler #scheduler id="scheduler" [dataSource]="store" 
- (onAppointmentFormOpening)="onAppointmentFormCreated($event)"
- [groups]="groups"
- >
- 
-</dx-scheduler >
+  
+  <label for="locationFilter" class="label">Select Location:</label>
+<select id="locationFilter" class="select" (change)="onLocationFilterChanged($event.target.value)">
+  <option value="">كل المحاكم</option>
+  <option *ngFor="let location of rooms" [value]="location.id">{{ location.text }}</option>
+</select>
 
- 
-<h1>good</h1> 
- 
+<div class="options">
+  <div class="caption">Use colors of:</div>
+  <div class="option">
+    <dx-radio-group
+      [items]="resourcesList"
+      [(value)]="selectedResource"
+      layout="horizontal"
+    >
+    </dx-radio-group>
+  </div>
+</div>
+  <dx-scheduler #scheduler id="scheduler" [dataSource]="store" 
+  (onAppointmentFormOpening)="onAppointmentFormCreated($event)"
+  [groups]="groups"
+   
+  >
+  <dxi-resource
+  fieldExpr="tribunal"
+  label="Tribunal"
+  [dataSource]="rooms"
+  [useColorAsDefault]="selectedResource === 'Tribunal'"
+> </dxi-resource>
+  </dx-scheduler >
+  
+  

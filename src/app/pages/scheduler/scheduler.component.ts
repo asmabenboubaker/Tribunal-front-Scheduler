@@ -42,39 +42,26 @@ onAppointmentFormCreated (e:any) {
     "title",
     e.appointmentData.text
       ? e.appointmentData.text
-      : "Create a new appointment"
+      : "قم بإنشاء موعد جديد"
   );
 
   const form = e.form;
   let mainGroupItems = form.itemOption("mainGroup").items;
-  if (
-    !mainGroupItems.find(function (i) {
-      return i.dataField === "phone";
-    })
-  ) {
-    mainGroupItems.push({
-      colSpan: 2,
-      label: { text: "Phone Number" },
-      editorType: "dxTextBox",
-      dataField: "phone"
-    });
-    form.itemOption("mainGroup", "items", mainGroupItems);
-  }
-
+  
   let formItems = form.option("items");
-  if (
-    !formItems.find(function (i) {
-      return i.dataField === "location";
-    })
-  ) {
-    formItems.push({
-      colSpan: 2,
-      label: { text: "Location" },
-      editorType: "dxTextBox",
-      dataField: "location"
-    });
-    form.option("items", formItems);
-  }
+  // if (
+  //   !formItems.find(function (i) {
+  //     return i.dataField === "location";
+  //   })
+  // ) {
+  //   formItems.push({
+  //     colSpan: 2,
+  //     label: { text: "المحكمة " },
+  //     editorType: "dxTextBox",
+  //     dataField: "location"
+  //   });
+  //   form.option("items", formItems);
+  // }
 
 }
   audienceList: Audience[] = [];
@@ -90,21 +77,22 @@ onAppointmentFormCreated (e:any) {
  
 store: CustomStore;
 dataSource: DataSource;
- // filter by location  
  
- assignees = allAssignees;
-
- places = places;
-
- allAssignees = allAssignees;
-
- defaultSelectedAssignees = allAssignees.map(item => item.text);
 
  views = ['day'];
 
  groups = ['location'];
 constructor(private dataService:ServiceschedulerService,private cdr: ChangeDetectorRef) {
-  
+  this.rooms = dataService.getTribunalList().subscribe(
+
+    (data) => {
+      this.rooms = data;
+    },
+    (error) => {
+      console.log(error);
+    }
+
+  );
   this.resourcesData = dataService.getResources();
   this.store = new CustomStore({
     key: "idAudience",
@@ -142,13 +130,11 @@ constructor(private dataService:ServiceschedulerService,private cdr: ChangeDetec
     paginate: false,  
   });
 }
-// onTagBoxValueChanged(e: OptionChangedEvent) {
-//   this.assignees = allAssignees.filter((item) => e.value.includes(item.text));
-// console.log("onTagBoxValueChanged fires");
-// }
+ // filter by location  
+ 
 locations: { id: number; text: string }[] = [
-  { id: 1, text: 'masra' },
-  { id: 2, text: 'kkkkkkkkkkkk' },
+  { id: 1, text: 'tribunal1' },
+  { id: 2, text: 'tribunal2' },
   
 ];
 onLocationFilterChanged(location: string) {
@@ -190,8 +176,7 @@ onLocationFilterChanged(location: string) {
     this.store = new CustomStore({
       key: 'idAudience',
       load: (loadOptions) => {
-        // Modify this part to fetch filtered appointments based on location
-        // For example:
+        console.log("ee"+location )
         return new Promise((resolve, reject) => {
           this.dataService.getFilteredAppointmentsByLocation(location).subscribe(
             (filteredAppointments) => {
@@ -222,5 +207,9 @@ onLocationFilterChanged(location: string) {
   }
 }
 
+//color of the appointment
 
+rooms: any;
+resourcesList: string[] = ['all', 'Tribunal', 'Priority'];
+selectedResource: string = this.resourcesList[0];
   }
