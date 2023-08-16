@@ -33,9 +33,9 @@ import { FlagsMenuComponent } from './theme/components/flags-menu/flags-menu.com
 import { SchedulerComponent } from './pages/scheduler/scheduler.component';
 import { DxSchedulerModule, DxTagBoxModule } from 'devextreme-angular'; 
 import { DxButtonModule } from 'devextreme-angular';
-import { DxSelectBoxModule, DxRadioGroupModule  } from 'devextreme-angular';  
+import { DxSelectBoxModule, DxRadioGroupModule ,DxFormModule , DxColorBoxModule} from 'devextreme-angular';  
 import { FormsModule } from '@angular/forms';
-
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 @NgModule({  
   imports: [
     BrowserModule,
@@ -47,7 +47,10 @@ import { FormsModule } from '@angular/forms';
     DxButtonModule,
     DxSelectBoxModule,
     FormsModule,
+    DxFormModule,
     DxTagBoxModule ,
+ 
+    DxColorBoxModule,
     DxRadioGroupModule,
     TranslateModule.forRoot({
       loader: {

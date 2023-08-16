@@ -39,9 +39,14 @@ export class ServiceschedulerService {
 // crud tribunal
 
 private apiUrlTribunal = 'http://localhost:8081/picosoft/api/tribunal/listTribunal';
-
+private addapiTribunal="http://localhost:8081/picosoft/api/tribunal/addTribunal"
 getTribunalList(): Observable<any[]> {
   return this.http.get<any[]>(this.apiUrlTribunal); 
+}
+
+
+addTribunal(newTribunal: any): Observable<any> {
+  return this.http.post<any>(this.addapiTribunal, newTribunal);
 }
 
 }
