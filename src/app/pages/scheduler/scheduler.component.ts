@@ -18,6 +18,7 @@ import arMessages from 'devextreme/localization/messages/ar.json';
 import { assignees as allAssignees, places } from './data';
 import { OptionChangedEvent } from 'devextreme/ui/tag_box';
 import { DxColorBoxModule } from 'devextreme-angular';
+import { Router } from '@angular/router';
 @Component({
   selector: 'app-scheduler',
   templateUrl: './scheduler.component.html',
@@ -36,7 +37,7 @@ export class SchedulerComponent implements OnInit {
   // add fields to the form
   onAppointmentFormCreated(e: any) {
     console.log("onAppointmentFormOpening fires");
-
+  
     e.popup.option("showTitle", true);
     e.popup.option(
       "title",
@@ -44,26 +45,30 @@ export class SchedulerComponent implements OnInit {
         ? e.appointmentData.text
         : "قم بإنشاء موعد جديد"
     );
-
+  
     const form = e.form;
     let mainGroupItems = form.itemOption("mainGroup").items;
-
+  
     let formItems = form.option("items");
-    // if (
-    //   !formItems.find(function (i) {
-    //     return i.dataField === "location";
-    //   })
-    // ) {
-    //   formItems.push({
-    //     colSpan: 2,
-    //     label: { text: "المحكمة " },
-    //     editorType: "dxTextBox",
-    //     dataField: "location"
-    //   });
-    //   form.option("items", formItems);
-    // }
-
+    if (
+      !formItems.find(function (i) {
+        return i.dataField === "rooms";
+      })
+    ) {
+      formItems.push({
+        colSpan: 2,
+        label: { text: "غرفة" },
+        editorType: "dxSelectBox",  
+        dataField: "rooms",
+        editorOptions: {
+          dataSource: ["Room 1", "Room 2", "Room 3"],  
+          value: e.appointmentData.room 
+        }
+      });
+      form.option("items", formItems);
+    }
   }
+  
   audienceList: Audience[] = [];
   //customDataSource: CustomStore;
   customDataSource: CustomStore;
@@ -82,7 +87,7 @@ export class SchedulerComponent implements OnInit {
   views = ['day'];
 
   groups = ['location'];
-  constructor(private dataService: ServiceschedulerService, private cdr: ChangeDetectorRef) {
+  constructor(private dataService: ServiceschedulerService, private cdr: ChangeDetectorRef, private router: Router) {
     this.rooms = dataService.getTribunalList().subscribe(
 
       (data) => {
@@ -102,6 +107,7 @@ export class SchedulerComponent implements OnInit {
           dataService.getAudienceList().subscribe(
             (audienceList) => {
               resolve(audienceList);
+              //alert("تم تحميل المواعيد بنجاح");
             },
             (error) => {
               reject(error);
@@ -119,9 +125,11 @@ export class SchedulerComponent implements OnInit {
       },
       remove: (key) => {
         return dataService.deleteAudience(key).toPromise().then(() => {
-
-
+          
+        }).catch(error => {
+          console.log('Error deleting data:', error);
         });
+      
       },
     });
 
@@ -165,9 +173,11 @@ export class SchedulerComponent implements OnInit {
         },
         remove: (key) => {
           return this.dataService.deleteAudience(key).toPromise().then(() => {
-
-
+             
+          }).catch(error => {
+            console.log('Error deleting data:', error);
           });
+        
         },
       });
 
@@ -197,21 +207,111 @@ export class SchedulerComponent implements OnInit {
           return this.dataService.updateAudience(key, values).toPromise();
         },
         remove: (key) => {
+          
           return this.dataService.deleteAudience(key).toPromise().then(() => {
-
-
+            
+          }).catch(error => {
+            console.log('Error deleting data:', error);
           });
+        
         },
 
       });
     }
   }
 
+
+  // filter by room
+
+  onLocationFilterChanged2(room: string) {
+    if (!room) {
+      // Load all appointments
+      this.store = new CustomStore({
+        key: 'idAudience',
+        load: (loadOptions) => {
+
+          return new Promise((resolve, reject) => {
+            this.dataService.getAudienceList().subscribe(
+              (audienceList) => {
+                resolve(audienceList);
+              },
+              (error) => {
+                reject(error);
+              }
+            );
+          });
+        },
+        insert: (values) => {
+
+          return this.dataService.addAppointment(values).toPromise();
+        },
+        update: (key, values) => {
+
+          return this.dataService.updateAudience(key, values).toPromise();
+        },
+        remove: (key) => {
+          return this.dataService.deleteAudience(key).toPromise().then(() => {
+             
+          }).catch(error => {
+            console.log('Error deleting data:', error);
+          });
+        
+        },
+      });
+
+    } else {
+
+      this.store = new CustomStore({
+        key: 'idAudience',
+        load: (loadOptions) => {
+          console.log("ee" + location)
+          return new Promise((resolve, reject) => {
+            this.dataService.getFilteredAppointmentsByRoom(room).subscribe(
+              (filteredAppointments) => {
+                resolve(filteredAppointments);
+              },
+              (error) => {
+                reject(error);
+              }
+            );
+          });
+        },
+        insert: (values) => {
+
+          return this.dataService.addAppointment(values).toPromise();
+        },
+        update: (key, values) => {
+
+          return this.dataService.updateAudience(key, values).toPromise();
+        },
+        remove: (key) => {
+          
+          return this.dataService.deleteAudience(key).toPromise().then(() => {
+            
+          }).catch(error => {
+            console.log('Error deleting data:', error);
+          });
+        
+        },
+
+      });
+    }
+  }
+
+
+
   //color of the appointment
 
   rooms: any;
-  resourcesList: string[] = ['all', 'Tribunal'];
+  resourcesList: string[] = ['Tribunal', 'all'];
   selectedResource: string = this.resourcesList[0];
+  //list of room
+  room: any[] = [
+    { id: 1, name: 'Room 1' },
+    { id: 2, name: 'Room 2' },
+    { id: 3, name: 'Room 3' },
+
+  ];
 
 
 
@@ -231,6 +331,7 @@ export class SchedulerComponent implements OnInit {
   
   addTribunal() {
     console.log('Adding tribunal:', this.formData);
+    
     this.dataService.addTribunal(this.formData).subscribe(
       (response) => {
         this.toggleFormVisibility();

@@ -35,6 +35,10 @@ export class ServiceschedulerService {
   getResources(): Resource[] {
     return resources;
   }
+  getFilteredAppointmentsByRoom(room: string): Observable<Audience[]> {
+    const apiUrl = `http://localhost:8081/picosoft/api/schedule/AudienceByRoom/${room}`;
+    return this.http.get<Audience[]>(apiUrl);
+  }
   
 // crud tribunal
 
@@ -46,6 +50,7 @@ getTribunalList(): Observable<any[]> {
 
 
 addTribunal(newTribunal: any): Observable<any> {
+  console.log("service add tribunal"+newTribunal.text);
   return this.http.post<any>(this.addapiTribunal, newTribunal);
 }
 

@@ -1,11 +1,22 @@
-<label for="locationFilter" class="label">Select Location:</label>
-<select id="locationFilter" class="select" (change)="onLocationFilterChanged($event.target.value)">
-  <option value="">كل المحاكم</option>
-  <option *ngFor="let location of rooms" [value]="location.id">{{ location.text }}</option>
-</select>
-
+<div class="row">
+  <div class="col-md-6">
+    <label for="locationFilter" class="label">:اختر حسب الموقع</label>
+    <select id="locationFilter" class="select" (change)="onLocationFilterChanged($event.target.value)">
+      <option value="">كل المحاكم</option>
+      <option *ngFor="let location of rooms" [value]="location.id">{{ location.text }}</option>
+    </select>
+  </div>
+  <div class="col-md-6">
+    <label for="locationFilter" class="label">:اختر حسب قاعة</label>
+    <select id="locationFilter" class="select" (change)="onLocationFilterChanged2($event.target.value)">
+      <option value="">كل غرف
+      </option>
+      <option *ngFor="let location of room" [value]="location.name">{{ location.name }}</option>
+    </select>
+  </div>
+</div>
 <div class="options">
-  <div class="caption">Use colors of:</div>
+  <div class="caption"> :عرض حسب اللون</div>
   <div class="option">
     <dx-radio-group [items]="resourcesList" [(value)]="selectedResource" layout="horizontal">
     </dx-radio-group>
@@ -30,8 +41,8 @@ align-items: center;
 flex-direction: column;
 margin-top: 20px;">
   <dx-form [formData]="formData">
-    <dxi-item dataField="المحكمة" editorType="dxTextBox"></dxi-item>
-    <dxi-item dataField="اللون" editorType="dxColorBox">
+    <dxi-item dataField="text" editorType="dxTextBox"></dxi-item>
+    <dxi-item dataField="color" editorType="dxColorBox">
       <dxo-editorOptions [value]="formData.color"></dxo-editorOptions>
     </dxi-item>
   </dx-form>
